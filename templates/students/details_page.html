@@ -1,0 +1,11 @@
+{% extends "base.html" %}
+{% block content %}
+    {% for image in images %}
+        <img src="{{ student.att.image.url }}" width="300px">
+    {% endfor %}
+                <p>{{ student.student_id }}</p>
+                <p>{{ student.iin }}</p>
+                <p>{{ student.first_name }}</p>
+                <p>{{ student.last_name }}</p>
+                <p>{{ student.group }}</p>
+{% endblock %}

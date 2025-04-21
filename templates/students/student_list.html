@@ -1,0 +1,15 @@
+{% extends "base.html" %}
+{% block content %}
+    {% for student in students %}
+        <div style="border: 1px solid black;">
+            <a href="{% url 'details_page' sid=student.pk %}">
+                <img src="{{ student.att.image.url }}" width="300px">
+                <p>{{ student.student_id }}</p>
+                <p>{{ student.iin }}</p>
+                <p>{{ student.first_name }}</p>
+                <p>{{ student.last_name }}</p>
+                <p>{{ student.group }}</p>
+            </a>
+        </div>
+    {% endfor %}
+{% endblock content %}
