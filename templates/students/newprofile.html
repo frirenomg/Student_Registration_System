@@ -1,0 +1,91 @@
+{% extends "base.html" %}
+{% block content %}
+<div>
+    <h1>Создание поста</h1>
+    <form method="POST" enctype="multipart/form-data">
+        {% csrf_token %}  <!-- Обязательно оставьте этот тег -->
+        
+        <div>
+            <label for="student_id">Id студента</label>
+            {{ form.student_id }}
+        </div>
+        
+        <div>
+            <label for="iin">ИИН</label>
+            {{ form.iin }}
+        </div>
+        
+        <div>
+            <label for="first_name">Имя</label>
+            {{ form.first_name }}
+        </div>
+        
+        <div>
+            <label for="last_name">Фамилия</label>
+            {{ form.last_name }}
+        </div>
+        
+        <div>
+            <label for="date_of_birth">Дата рождения</label>
+            {{ form.date_of_birth }}
+        </div>
+        
+        <div>
+            <label for="email">Э-почта</label>
+            {{ form.email }}
+        </div>
+        
+        <div>
+            <label for="phone_number">Телефон</label>
+            {{ form.phone_number }}
+        </div>
+        
+        <div>
+            <label for="group">Группа</label>
+            {{ form.group }}
+        </div>
+        
+        <div>
+            <label for="address">Адрес</label>
+            {{ form.address }}
+        </div>
+        
+        <div>
+            <label for="status">Статус</label>
+            {{ form.status }}
+        </div>
+        
+        <div>
+            <label for="enrollment_date">Дата зачисления</label>
+            {{ form.enrollment_date }}
+        </div>
+        
+        <div>
+            <label for="graduation_date">Дата выпуска</label>
+            {{ form.graduation_date }}
+        </div>
+        
+        <div>
+            <label for="gender">Гендер</label>
+            {{ form.gender }}
+        </div>
+        
+        <div>
+            <label for="citizenship">Гражданство</label>
+            {{ form.citizenship }}
+        </div>
+        
+        <div>
+            <label for="special_needs">Особые потребности</label>
+            {{ form.special_needs }}
+        </div>
+        
+        <div>
+            <label for="images">Фото</label>
+            {{ form.images }}
+        </div>
+        
+        <button type="submit">Сохранить профиль</button>
+    </form>
+</div>
+{% endblock %}

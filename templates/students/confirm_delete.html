@@ -1,0 +1,16 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="container mt-4">
+    <h1>Подтверждение удаления</h1>
+    <div class="alert alert-danger">
+        Вы уверены, что хотите удалить профиль студента:<br>
+        <strong>{{ student.first_name }} {{ student.last_name }}</strong> (ID: {{ student.student_id }})?
+    </div>
+    
+    <form method="POST" action="{% url 'delete_profile' sid=student.pk %}">
+        {% csrf_token %}
+        <button type="submit" class="btn btn-danger">Да, удалить</button>
+        <a href="{% url 'details_page' sid=student.pk %}" class="btn btn-secondary">Отмена</a>
+    </form>
+</div>
+{% endblock %}

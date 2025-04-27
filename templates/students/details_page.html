@@ -1,11 +1,29 @@
 {% extends "base.html" %}
 {% block content %}
-    {% for image in images %}
-        <img src="{{ student.att.image.url }}" width="300px">
-    {% endfor %}
-                <p>{{ student.student_id }}</p>
-                <p>{{ student.iin }}</p>
-                <p>{{ student.first_name }}</p>
-                <p>{{ student.last_name }}</p>
-                <p>{{ student.group }}</p>
+<div>
+    <!-- Кнопки действий -->
+    <div>
+        <a href="{% url 'edit_profile' sid=student.pk %}">Редактировать</a>
+        <a href="{% url 'delete_profile' sid=student.pk %}" onclick="return confirm('Вы уверены, что хотите удалить этого студента?')">Удалить</a>
+    </div>
+
+    <!-- Изображения студента -->
+    <div>
+        {% for image in images %}
+            <img src="{{ image.image.url }}" width="300">
+        {% endfor %}
+    </div>
+
+    <!-- Информация о студенте -->
+    <div>
+        <p><strong>ID студента:</strong> {{ student.student_id }}</p>
+        <p><strong>ИИН:</strong> {{ student.iin }}</p>
+        <p><strong>Имя:</strong> {{ student.first_name }}</p>
+        <p><strong>Фамилия:</strong> {{ student.last_name }}</p>
+        <p><strong>Группа:</strong> {{ student.group }}</p>
+        <p><strong>Дата рождения:</strong> {{ student.date_of_birth }}</p>
+        <p><strong>Статус:</strong> {{ student.status }}</p>
+        <p><strong>Дата зачисления:</strong> {{ student.enrollment_date }}</p>
+    </div>
+</div>
 {% endblock %}

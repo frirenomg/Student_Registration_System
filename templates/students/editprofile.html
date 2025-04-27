@@ -1,0 +1,29 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="container">
+    <h1>Редактирование профиля студента</h1>
+    
+    <form method="POST" enctype="multipart/form-data">
+        {% csrf_token %}
+        
+        {{ form.as_p }}
+        
+        <div class="mb-3">
+            <label class="form-label">Текущие изображения:</label>
+            {% for img in current_images %}
+                <img src="{{ img.image.url }}" width="100" class="img-thumbnail m-1">
+            {% empty %}
+                <p>Нет загруженных изображений</p>
+            {% endfor %}
+        </div>
+        
+        <div class="mb-3">
+            <label for="images" class="form-label">Новые изображения:</label>
+            <input type="file" name="images" id="images" multiple class="form-control">
+        </div>
+        
+        <button type="submit" class="btn btn-primary">Сохранить изменения</button>
+        <a href="{% url 'details_page' sid=student.pk %}" class="btn btn-secondary">Отмена</a>
+    </form>
+</div>
+{% endblock %}
