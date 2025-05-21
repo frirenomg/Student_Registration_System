@@ -1,29 +1,355 @@
 {% extends "base.html" %}
 {% block content %}
-<div>
-    <!-- Кнопки действий -->
-    <div>
-        <a href="{% url 'edit_profile' sid=student.pk %}">Редактировать</a>
-        <a href="{% url 'delete_profile' sid=student.pk %}" onclick="return confirm('Вы уверены, что хотите удалить этого студента?')">Удалить</a>
+
+<style>
+    body {
+        background-color: #1a1a2e;
+        font-family: 'Poppins', sans-serif;
+        color: #e6e6e6;
+        margin: 0;
+        padding: 20px;
+    }
+    
+    .system-header {
+        background: linear-gradient(135deg, #16213e 0%, #0f3460 100%);
+        color: #ffffff;
+        padding: 25px;
+        border-radius: 10px;
+        margin-bottom: 30px;
+        box-shadow: 0 10px 20px rgba(0,0,0,0.3);
+        text-align: center;
+        border: 2px solid #00b4d8;
+    }
+    
+    .system-header h1 {
+        font-size: 2.5rem;
+        margin: 0;
+        font-weight: 700;
+        letter-spacing: 1px;
+        text-transform: uppercase;
+        text-shadow: 2px 2px 4px rgba(0,0,0,0.5);
+    }
+    
+    .action-buttons {
+        display: flex;
+        gap: 15px;
+        margin-bottom: 30px;
+    }
+    
+    .action-btn {
+        padding: 12px 24px;
+        font-weight: 600;
+        border: none;
+        border-radius: 8px;
+        cursor: pointer;
+        transition: all 0.3s;
+        font-size: 1rem;
+        text-decoration: none;
+        display: inline-flex;
+        align-items: center;
+    }
+    
+    .edit-btn {
+        background: linear-gradient(135deg, #00b4d8 0%, #0077b6 100%);
+        color: white;
+    }
+    
+    .edit-btn:hover {
+        background: linear-gradient(135deg, #0096c7 0%, #005f8a 100%);
+        transform: translateY(-2px);
+        box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+    }
+    
+    .delete-btn {
+        background: linear-gradient(135deg, #ef476f 0%, #d90429 100%);
+        color: white;
+    }
+    
+    .delete-btn:hover {
+        background: linear-gradient(135deg, #d90429 0%, #9d0208 100%);
+        transform: translateY(-2px);
+        box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+    }
+    
+    .student-details {
+        background: linear-gradient(145deg, #16213e 0%, #1a1a2e 100%);
+        border: 2px solid #00b4d8;
+        border-radius: 12px;
+        padding: 30px;
+        margin-bottom: 30px;
+        box-shadow: 0 8px 16px rgba(0,0,0,0.3);
+    }
+    
+    .detail-section {
+        margin-bottom: 25px;
+    }
+    
+    .detail-section h2 {
+        color: #90e0ef;
+        border-bottom: 2px solid #00b4d8;
+        padding-bottom: 10px;
+        margin-bottom: 20px;
+    }
+    
+    .detail-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+        gap: 20px;
+    }
+    
+    .detail-item {
+        display: flex;
+        margin-bottom: 15px;
+    }
+    
+    .detail-label {
+        font-weight: 600;
+        color: #90e0ef;
+        width: 180px;
+        font-size: 1rem;
+    }
+    
+    .detail-value {
+        color: #ffffff;
+        font-weight: 500;
+        flex: 1;
+    }
+    
+    .gallery {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 20px;
+        margin-top: 30px;
+    }
+    
+    .gallery-item {
+        width: 300px;
+        height: 300px;
+        border-radius: 10px;
+        overflow: hidden;
+        border: 2px solid #00b4d8;
+        transition: all 0.3s;
+    }
+    
+    .gallery-item:hover {
+        transform: scale(1.03);
+        box-shadow: 0 8px 16px rgba(0,180,216,0.3);
+    }
+    
+    .gallery-item img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+    }
+    
+    .expand-btn {
+        background: transparent;
+        color: #90e0ef;
+        border: 2px solid #00b4d8;
+        padding: 10px 20px;
+        border-radius: 6px;
+        cursor: pointer;
+        margin-top: 15px;
+        transition: all 0.3s;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+    }
+    
+    .expand-btn:hover {
+        background: rgba(0,180,216,0.1);
+    }
+    
+    .expand-btn i {
+        transition: transform 0.3s;
+    }
+    
+    .expand-btn.expanded i {
+        transform: rotate(180deg);
+    }
+    
+    .additional-details {
+        max-height: 0;
+        overflow: hidden;
+        transition: max-height 0.5s ease, opacity 0.3s ease;
+        opacity: 0;
+    }
+    
+    .additional-details.expanded {
+        max-height: 1000px;
+        opacity: 1;
+        margin-top: 20px;
+    }
+</style>
+
+<div class="system-header">
+    <h1>Student Details</h1>
+    <p>Detailed information about {{ student.first_name }} {{ student.last_name }}</p>
+</div>
+
+<div class="action-buttons">
+    <a href="{% url 'edit_profile' sid=student.pk %}" class="action-btn edit-btn">
+        <i>✏️</i> Edit Profile
+    </a>
+    <a href="{% url 'delete_profile' sid=student.pk %}" class="action-btn delete-btn" onclick="return confirm('Are you sure you want to delete this student?')">
+        <i>🗑️</i> Delete Profile
+    </a>
+</div>
+
+<div class="student-details">
+    <div class="detail-section">
+        <h2>Basic Information</h2>
+        <div class="detail-grid">
+            <div class="detail-item">
+                <span class="detail-label">Student ID:</span>
+                <span class="detail-value">{{ student.student_id }}</span>
+            </div>
+            <div class="detail-item">
+                <span class="detail-label">IIN:</span>
+                <span class="detail-value">{{ student.iin }}</span>
+            </div>
+            <div class="detail-item">
+                <span class="detail-label">First Name:</span>
+                <span class="detail-value">{{ student.first_name }}</span>
+            </div>
+            <div class="detail-item">
+                <span class="detail-label">Last Name:</span>
+                <span class="detail-value">{{ student.last_name }}</span>
+            </div>
+            <div class="detail-item">
+                <span class="detail-label">Group:</span>
+                <span class="detail-value">{{ student.group }}</span>
+            </div>
+            <div class="detail-item">
+                <span class="detail-label">Birth Date:</span>
+                <span class="detail-value">{{ student.date_of_birth|date:"d.m.Y" }}</span>
+            </div>
+        </div>
     </div>
 
-    <!-- Изображения студента -->
-    <div>
-        {% for image in images %}
-            <img src="{{ image.image.url }}" width="300">
-        {% endfor %}
-    </div>
+    <button class="expand-btn" onclick="toggleDetails(this)">
+        <i>▼</i> Show Additional Details
+    </button>
 
-    <!-- Информация о студенте -->
-    <div>
-        <p><strong>ID студента:</strong> {{ student.student_id }}</p>
-        <p><strong>ИИН:</strong> {{ student.iin }}</p>
-        <p><strong>Имя:</strong> {{ student.first_name }}</p>
-        <p><strong>Фамилия:</strong> {{ student.last_name }}</p>
-        <p><strong>Группа:</strong> {{ student.group }}</p>
-        <p><strong>Дата рождения:</strong> {{ student.date_of_birth }}</p>
-        <p><strong>Статус:</strong> {{ student.status }}</p>
-        <p><strong>Дата зачисления:</strong> {{ student.enrollment_date }}</p>
+    <div class="additional-details" id="additionalDetails">
+        <div class="detail-section">
+            <h2>Academic Information</h2>
+            <div class="detail-grid">
+                <div class="detail-item">
+                    <span class="detail-label">Status:</span>
+                    <span class="detail-value">{{ student.get_status_display }}</span>
+                </div>
+                <div class="detail-item">
+                    <span class="detail-label">Enrollment Date:</span>
+                    <span class="detail-value">{{ student.enrollment_date|date:"d.m.Y" }}</span>
+                </div>
+                <div class="detail-item">
+                    <span class="detail-label">Graduation Date:</span>
+                    <span class="detail-value">
+                        {% if student.graduation_date %}
+                            {{ student.graduation_date|date:"d.m.Y" }}
+                        {% else %}
+                            -
+                        {% endif %}
+                    </span>
+                </div>
+            </div>
+        </div>
+
+        <div class="detail-section">
+            <h2>Personal Information</h2>
+            <div class="detail-grid">
+                <div class="detail-item">
+                    <span class="detail-label">Gender:</span>
+                    <span class="detail-value">{{ student.get_gender_display }}</span>
+                </div>
+                <div class="detail-item">
+                    <span class="detail-label">Email:</span>
+                    <span class="detail-value">{{ student.email }}</span>
+                </div>
+                <div class="detail-item">
+                    <span class="detail-label">Phone:</span>
+                    <span class="detail-value">
+                        {% if student.phone_number %}
+                            {{ student.phone_number }}
+                        {% else %}
+                            -
+                        {% endif %}
+                    </span>
+                </div>
+                <div class="detail-item">
+                    <span class="detail-label">Address:</span>
+                    <span class="detail-value">
+                        {% if student.address %}
+                            {{ student.address }}
+                        {% else %}
+                            -
+                        {% endif %}
+                    </span>
+                </div>
+                <div class="detail-item">
+                    <span class="detail-label">Citizenship:</span>
+                    <span class="detail-value">
+                        {% if student.citizenship %}
+                            {{ student.citizenship }}
+                        {% else %}
+                            -
+                        {% endif %}
+                    </span>
+                </div>
+                <div class="detail-item">
+                    <span class="detail-label">Special Needs:</span>
+                    <span class="detail-value">
+                        {% if student.special_needs %}
+                            {{ student.special_needs }}
+                        {% else %}
+                            -
+                        {% endif %}
+                    </span>
+                </div>
+            </div>
+        </div>
     </div>
 </div>
+
+{% if images %}
+<div class="student-details">
+    <div class="detail-section">
+        <h2>Photo Gallery</h2>
+        <div class="gallery">
+            {% for image in images %}
+                <div class="gallery-item">
+                    <img src="{{ image.image.url }}" alt="Student photo">
+                </div>
+            {% endfor %}
+        </div>
+    </div>
+</div>
+{% endif %}
+
+<script>
+    function toggleDetails(btn) {
+        const details = document.getElementById('additionalDetails');
+        details.classList.toggle('expanded');
+        btn.classList.toggle('expanded');
+        
+        if (btn.classList.contains('expanded')) {
+            btn.innerHTML = '<i>▲</i> Hide Additional Details';
+        } else {
+            btn.innerHTML = '<i>▼</i> Show Additional Details';
+        }
+    }
+    
+    // Smooth scroll to additional details if URL has hash
+    document.addEventListener('DOMContentLoaded', function() {
+        if (window.location.hash === '#additional') {
+            const btn = document.querySelector('.expand-btn');
+            btn.click();
+            setTimeout(() => {
+                document.getElementById('additionalDetails').scrollIntoView({ behavior: 'smooth' });
+            }, 100);
+        }
+    });
+</script>
+
 {% endblock %}

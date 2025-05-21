@@ -10,6 +10,7 @@ class StudentProfile(models.Model):
     # Университетский ID студента
     student_id = models.CharField(max_length=20, unique=True, verbose_name="ID студента")
     iin = models.CharField(max_length=12, unique=True, verbose_name="ИИН")
+    
 
     first_name = models.CharField(max_length=100, verbose_name="Имя")
     last_name = models.CharField(max_length=100, verbose_name="Фамилия")

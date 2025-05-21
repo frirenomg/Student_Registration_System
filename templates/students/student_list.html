@@ -1,16 +1,466 @@
 {% extends "base.html" %}
 {% block content %}
-<a href="{% url 'add_profile' %}"><button>Создать новый профиль</button></a>
+
+<style>
+    body {
+        background-color: #1a1a2e;
+        font-family: 'Poppins', sans-serif;
+        color: #e6e6e6;
+        margin: 0;
+        padding: 20px;
+    }
+    
+    .system-header {
+        background: linear-gradient(135deg, #16213e 0%, #0f3460 100%);
+        color: #ffffff;
+        padding: 25px;
+        border-radius: 10px;
+        margin-bottom: 30px;
+        box-shadow: 0 10px 20px rgba(0,0,0,0.3);
+        text-align: center;
+        border: 2px solid #00b4d8;
+    }
+    
+    .system-header h1 {
+        font-size: 2.5rem;
+        margin: 0;
+        font-weight: 700;
+        letter-spacing: 1px;
+        text-transform: uppercase;
+        text-shadow: 2px 2px 4px rgba(0,0,0,0.5);
+    }
+    
+    .system-header p {
+        margin: 10px 0 0;
+        font-size: 1.1rem;
+        opacity: 0.9;
+    }
+    
+    .student-container {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 25px;
+        margin-top: 20px;
+    }
+    
+    .student-profile {
+        border: 2px solid #00b4d8;
+        border-radius: 12px;
+        padding: 25px;
+        width: 100%;
+        max-width: 850px;
+        margin: 0 auto;
+        background: linear-gradient(145deg, #16213e 0%, #1a1a2e 100%);
+        box-shadow: 0 8px 16px rgba(0,0,0,0.3);
+        transition: all 0.4s ease;
+        display: flex;
+        flex-direction: column;
+    }
+    
+    .student-profile:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 12px 24px rgba(0,180,216,0.2);
+        border-color: #90e0ef;
+    }
+    
+    .profile-header {
+        display: flex;
+        align-items: center;
+        margin-bottom: 20px;
+        padding-bottom: 20px;
+        border-bottom: 2px solid #00b4d8;
+    }
+    
+    .profile-image-container {
+        width: 100px;
+        height: 100px;
+        border-radius: 50%;
+        margin-right: 25px;
+        border: 3px solid #00b4d8;
+        overflow: hidden;
+        background: #0f3460;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+    
+    .profile-image {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+    }
+    
+    .profile-name {
+        color: #ffffff;
+        font-size: 1.8rem;
+        margin: 0;
+        font-weight: 600;
+    }
+    
+    .profile-details {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 25px;
+    }
+    
+    .detail-item {
+        display: flex;
+        align-items: center;
+        margin-bottom: 12px;
+        min-width: 220px;
+    }
+    
+    .detail-label {
+        font-weight: 600;
+        margin-right: 10px;
+        color: #90e0ef;
+        width: 120px;
+        font-size: 1rem;
+    }
+    
+    .detail-value {
+        color: #ffffff;
+        font-weight: 500;
+        font-size: 1.05rem;
+    }
+    
+    .filters-section {
+        background: linear-gradient(135deg, #0f3460 0%, #16213e 100%);
+        padding: 25px;
+        border-radius: 12px;
+        margin-bottom: 30px;
+        box-shadow: 0 8px 16px rgba(0,0,0,0.3);
+        border: 2px solid #00b4d8;
+    }
+    
+    .filters-section h2 {
+        color: #ffffff;
+        margin-top: 0;
+        margin-bottom: 25px;
+        font-size: 1.8rem;
+        border-bottom: 2px solid #00b4d8;
+        padding-bottom: 10px;
+    }
+    
+    .filter-group {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 25px;
+        margin-bottom: 20px;
+    }
+    
+    .filter-item {
+        display: flex;
+        flex-direction: column;
+        flex: 1;
+        min-width: 200px;
+    }
+    
+    label {
+        margin-bottom: 10px;
+        font-weight: 600;
+        color: #90e0ef;
+        font-size: 1rem;
+    }
+    
+    input, select {
+        padding: 12px;
+        border: 2px solid #00b4d8;
+        border-radius: 8px;
+        background: #1a1a2e;
+        color: #ffffff;
+        font-size: 1rem;
+        transition: all 0.3s;
+    }
+    
+    input:focus, select:focus {
+        border-color: #90e0ef;
+        outline: none;
+        box-shadow: 0 0 0 3px rgba(0,180,216,0.2);
+    }
+    
+    button {
+        padding: 14px 24px;
+        font-weight: 600;
+        border: none;
+        border-radius: 8px;
+        cursor: pointer;
+        transition: all 0.3s;
+        font-size: 1rem;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+    }
+    
+    .filter-btn {
+        background: linear-gradient(135deg, #00b4d8 0%, #0077b6 100%);
+        color: white;
+    }
+    
+    .filter-btn:hover {
+        background: linear-gradient(135deg, #0096c7 0%, #005f8a 100%);
+        transform: translateY(-2px);
+        box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+    }
+    
+    .reset-btn {
+        background: linear-gradient(135deg, #ef476f 0%, #d90429 100%);
+        color: white;
+        margin-left: 15px;
+    }
+    
+    .reset-btn:hover {
+        background: linear-gradient(135deg, #d90429 0%, #9d0208 100%);
+        transform: translateY(-2px);
+        box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+    }
+    
+    .add-btn {
+        background: linear-gradient(135deg, #38b000 0%, #008000 100%);
+        color: white;
+        margin-bottom: 30px;
+        padding: 14px 28px;
+        font-size: 1.1rem;
+    }
+    
+    .add-btn:hover {
+        background: linear-gradient(135deg, #008000 0%, #004b23 100%);
+        transform: translateY(-2px);
+        box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+    }
+    
+    .add-btn i {
+        margin-right: 10px;
+    }
+    
+    .detail-btn {
+        background: linear-gradient(135deg, #00b4d8 0%, #0077b6 100%);
+        color: white;
+        align-self: flex-end;
+        margin-top: 20px;
+        padding: 12px 24px;
+    }
+    
+    .detail-btn:hover {
+        background: linear-gradient(135deg, #0096c7 0%, #005f8a 100%);
+        transform: translateY(-2px);
+        box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+    }
+    
+    .no-results {
+        text-align: center;
+        color: #90e0ef;
+        font-size: 1.3rem;
+        margin: 50px 0;
+        width: 100%;
+        padding: 30px;
+        background: rgba(22, 33, 62, 0.7);
+        border-radius: 10px;
+        border: 2px dashed #00b4d8;
+    }
+</style>
+
+<div class="system-header">
+    <h1>Student Registration System</h1>
+    <p>Manage student profiles efficiently</p>
+</div>
+
+<div class="filters-section">
+    <h2>Student Filters</h2>
+    <div id="filter-form">
+        <div class="filter-group">
+            <div class="filter-item">
+                <label for="student_id">Student ID</label>
+                <input type="text" id="student_id" name="student_id" placeholder="Filter by ID...">
+            </div>
+            
+            <div class="filter-item">
+                <label for="iin">IIN</label>
+                <input type="text" id="iin" name="iin" placeholder="Filter by IIN...">
+            </div>
+            
+            <div class="filter-item">
+                <label for="first_name">First Name</label>
+                <input type="text" id="first_name" name="first_name" placeholder="Filter by first name...">
+            </div>
+        </div>
+        
+        <div class="filter-group">
+            <div class="filter-item">
+                <label for="last_name">Last Name</label>
+                <input type="text" id="last_name" name="last_name" placeholder="Filter by last name...">
+            </div>
+            
+            <div class="filter-item">
+                <label for="group">Group</label>
+                <input type="text" id="group" name="group" placeholder="Filter by group...">
+            </div>
+            
+            <div class="filter-item">
+                <label for="phone_number">Phone</label>
+                <input type="text" id="phone_number" name="phone_number" placeholder="Filter by phone...">
+            </div>
+        </div>
+        
+        <div>
+            <button type="button" onclick="resetFilters()" class="reset-btn">Reset Filters</button>
+        </div>
+    </div>
+</div>
+
+<a href="{% url 'add_profile' %}">
+    <button class="add-btn">
+        <i>+</i> Create New Profile
+    </button>
+</a>
+
+<div class="student-container" id="student-container">
     {% for student in students %}
-        <div style="border: 1px solid black;">
+        <div class="student-profile" 
+             data-student-id="{{ student.student_id|lower }}"
+             data-iin="{{ student.iin|lower }}"
+             data-first-name="{{ student.first_name|lower }}"
+             data-last-name="{{ student.last_name|lower }}"
+             data-group="{{ student.group|lower }}"
+             data-phone="{{ student.phone_number|default:''|lower }}">
+            <div class="profile-header">
+                <div class="profile-image-container">
+                    {% if student.profileattachments.image %}
+                        <img src="{{ student.profileattachments.image.url }}" class="profile-image" alt="Student Photo">
+                    {% else %}
+                        <span style="color: #90e0ef;">No Photo</span>
+                    {% endif %}
+                </div>
+                <h3 class="profile-name">{{ student.first_name }} {{ student.last_name }}</h3>
+            </div>
+            
+            <div class="profile-details">
+                <div class="detail-item">
+                    <span class="detail-label">Student ID:</span>
+                    <span class="detail-value">{{ student.student_id }}</span>
+                </div>
+                
+                <div class="detail-item">
+                    <span class="detail-label">IIN:</span>
+                    <span class="detail-value">{{ student.iin }}</span>
+                </div>
+                
+                <div class="detail-item">
+                    <span class="detail-label">Group:</span>
+                    <span class="detail-value">{{ student.group }}</span>
+                </div>
+            </div>
+            
             <a href="{% url 'details_page' sid=student.pk %}">
-                <img src="{{ image.image.url }}" width="300px">
-                <p>{{ student.student_id }}</p>
-                <p>{{ student.iin }}</p>
-                <p>{{ student.first_name }}</p>
-                <p>{{ student.last_name }}</p>
-                <p>{{ student.group }}</p>
+                <button class="detail-btn">View Details →</button>
             </a>
         </div>
+    {% empty %}
+        <div class="no-results">
+            <p>No students found.</p>
+        </div>
     {% endfor %}
+</div>
+
+<script>
+    // Функция фильтрации студентов
+    function filterStudents() {
+        const studentId = document.getElementById('student_id').value.toLowerCase();
+        const iin = document.getElementById('iin').value.toLowerCase();
+        const firstName = document.getElementById('first_name').value.toLowerCase();
+        const lastName = document.getElementById('last_name').value.toLowerCase();
+        const group = document.getElementById('group').value.toLowerCase();
+        const phone = document.getElementById('phone_number').value.toLowerCase();
+        
+        const students = document.querySelectorAll('.student-profile');
+        let visibleCount = 0;
+        
+        students.forEach(student => {
+            const matchesId = student.dataset.studentId.includes(studentId);
+            const matchesIin = student.dataset.iin.includes(iin);
+            const matchesFirstName = student.dataset.firstName.includes(firstName);
+            const matchesLastName = student.dataset.lastName.includes(lastName);
+            const matchesGroup = student.dataset.group.includes(group);
+            const matchesPhone = student.dataset.phone.includes(phone);
+            
+            if (matchesId && matchesIin && matchesFirstName && 
+                matchesLastName && matchesGroup && matchesPhone) {
+                student.style.display = 'flex';
+                visibleCount++;
+            } else {
+                student.style.display = 'none';
+            }
+        });
+        
+        // Показываем сообщение, если нет результатов
+        const noResults = document.querySelector('.no-results');
+        if (visibleCount === 0) {
+            if (!noResults) {
+                const container = document.getElementById('student-container');
+                const message = document.createElement('div');
+                message.className = 'no-results';
+                message.innerHTML = '<p>No students found matching your filters.</p>';
+                container.appendChild(message);
+            }
+        } else if (noResults) {
+            noResults.remove();
+        }
+        
+        // Обновляем анимации для видимых элементов
+        updateAnimations();
+    }
+    
+    // Сброс фильтров
+    function resetFilters() {
+        const inputs = document.querySelectorAll('#filter-form input');
+        inputs.forEach(input => {
+            input.value = '';
+        });
+        filterStudents();
+    }
+    
+    // Обновление анимаций
+    function updateAnimations() {
+        const profiles = document.querySelectorAll('.student-profile');
+        
+        function checkVisibility() {
+            const viewportHeight = window.innerHeight;
+            
+            profiles.forEach(profile => {
+                if (profile.style.display === 'none') return;
+                
+                const rect = profile.getBoundingClientRect();
+                const profileCenterY = rect.top + rect.height/2;
+                const distanceFromCenter = Math.abs(viewportHeight/2 - profileCenterY);
+                
+                const visibilityRatio = 1 - Math.min(0.7, distanceFromCenter / viewportHeight);
+                const opacity = 0.3 + visibilityRatio * 0.7;
+                const scale = 0.9 + visibilityRatio * 0.1;
+                
+                const parallaxOffset = (viewportHeight/2 - profileCenterY) * 0.15;
+                
+                profile.style.opacity = opacity;
+                profile.style.transform = `scale(${scale}) translateY(${parallaxOffset}px)`;
+                profile.style.boxShadow = `0 ${5 * visibilityRatio}px ${15 * visibilityRatio}px rgba(0,180,216,${0.2 * visibilityRatio})`;
+            });
+        }
+        
+        checkVisibility();
+    }
+    
+    // Инициализация
+    document.addEventListener('DOMContentLoaded', function() {
+        // Добавляем обработчики событий для полей фильтрации
+        const filterInputs = document.querySelectorAll('#filter-form input');
+        filterInputs.forEach(input => {
+            input.addEventListener('input', filterStudents);
+        });
+        
+        // Первоначальная проверка видимости
+        updateAnimations();
+        window.addEventListener('scroll', updateAnimations);
+        window.addEventListener('resize', updateAnimations);
+    });
+</script>
+
 {% endblock content %}

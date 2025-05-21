@@ -1,91 +1,328 @@
 {% extends "base.html" %}
 {% block content %}
-<div>
-    <h1>Создание поста</h1>
-    <form method="POST" enctype="multipart/form-data">
-        {% csrf_token %}  <!-- Обязательно оставьте этот тег -->
+
+<style>
+    body {
+        background-color: #1a1a2e;
+        font-family: 'Poppins', sans-serif;
+        color: #e6e6e6;
+        margin: 0;
+        padding: 20px;
+    }
+    
+    .system-header {
+        background: linear-gradient(135deg, #16213e 0%, #0f3460 100%);
+        color: #ffffff;
+        padding: 25px;
+        border-radius: 10px;
+        margin-bottom: 30px;
+        box-shadow: 0 10px 20px rgba(0,0,0,0.3);
+        text-align: center;
+        border: 2px solid #00b4d8;
+    }
+    
+    .system-header h1 {
+        font-size: 2.5rem;
+        margin: 0;
+        font-weight: 700;
+        letter-spacing: 1px;
+        text-transform: uppercase;
+        text-shadow: 2px 2px 4px rgba(0,0,0,0.5);
+    }
+    
+    .create-form {
+        background: linear-gradient(145deg, #16213e 0%, #1a1a2e 100%);
+        border: 2px solid #00b4d8;
+        border-radius: 12px;
+        padding: 30px;
+        max-width: 800px;
+        margin: 0 auto;
+        box-shadow: 0 8px 16px rgba(0,0,0,0.3);
+    }
+    
+    .form-group {
+        margin-bottom: 20px;
+    }
+    
+    .form-row {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 30px;
+    }
+    
+    .form-col {
+        flex: 1;
+        min-width: 250px;
+    }
+    
+    label {
+        display: block;
+        margin-bottom: 8px;
+        font-weight: 600;
+        color: #90e0ef;
+    }
+    
+    .required-field label:after {
+        content: " *";
+        color: #ef476f;
+    }
+    
+    input, select, textarea {
+        width: 100%;
+        padding: 12px;
+        border: 2px solid #00b4d8;
+        border-radius: 8px;
+        background: #1a1a2e;
+        color: #ffffff;
+        font-size: 1rem;
+        transition: all 0.3s;
+    }
+    
+    textarea {
+        min-height: 100px;
+        resize: vertical;
+    }
+    
+    input:focus, select:focus, textarea:focus {
+        border-color: #90e0ef;
+        outline: none;
+        box-shadow: 0 0 0 3px rgba(0,180,216,0.2);
+    }
+    
+    .file-upload {
+        position: relative;
+        overflow: hidden;
+        margin-top: 15px;
+    }
+    
+    .file-upload-input {
+        position: absolute;
+        font-size: 100px;
+        opacity: 0;
+        right: 0;
+        top: 0;
+        cursor: pointer;
+    }
+    
+    .file-upload-label {
+        display: block;
+        padding: 15px;
+        border: 2px dashed #00b4d8;
+        border-radius: 8px;
+        text-align: center;
+        cursor: pointer;
+        transition: all 0.3s;
+    }
+    
+    .file-upload-label:hover {
+        background: rgba(0,180,216,0.1);
+    }
+    
+    .file-name {
+        margin-top: 10px;
+        font-size: 0.9rem;
+        color: #90e0ef;
+    }
+    
+    .preview-container {
+        width: 150px;
+        height: 150px;
+        border-radius: 50%;
+        overflow: hidden;
+        margin: 15px auto;
+        border: 3px solid #00b4d8;
+        background: #0f3460;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+    
+    .preview-image {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+    }
+    
+    .submit-btn {
+        background: linear-gradient(135deg, #38b000 0%, #008000 100%);
+        color: white;
+        padding: 14px 28px;
+        font-size: 1.1rem;
+        border: none;
+        border-radius: 8px;
+        cursor: pointer;
+        transition: all 0.3s;
+        font-weight: 600;
+        margin-top: 20px;
+        width: 100%;
+    }
+    
+    .submit-btn:hover {
+        background: linear-gradient(135deg, #008000 0%, #004b23 100%);
+        transform: translateY(-2px);
+        box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+    }
+</style>
+
+<div class="system-header">
+    <h1>Student Registration System</h1>
+    <p>Create new student profile</p>
+</div>
+
+<div class="create-form">
+    <form method="POST" enctype="multipart/form-data" id="profile-form">
+        {% csrf_token %}
         
-        <div>
-            <label for="student_id">Id студента</label>
-            {{ form.student_id }}
+        <!-- Поле для загрузки фото профиля -->
+        <div class="form-group">
+            <label>Profile Photo</label>
+            <div class="preview-container" id="imagePreview">
+                <span style="color: #90e0ef;">No image selected</span>
+            </div>
+            <div class="file-upload">
+                <label class="file-upload-label" for="id_image">
+                    Click to upload profile photo
+                    <div class="file-name" id="fileName">No file chosen</div>
+                </label>
+                <input type="file" name="image" id="id_image" accept="image/*" class="file-upload-input">
+            </div>
         </div>
         
-        <div>
-            <label for="iin">ИИН</label>
-            {{ form.iin }}
+        <div class="form-row">
+            <div class="form-col">
+                <div class="form-group required-field">
+                    <label for="id_student_id">Student ID</label>
+                    {{ form.student_id }}
+                </div>
+                
+                <div class="form-group required-field">
+                    <label for="id_iin">IIN</label>
+                    {{ form.iin }}
+                </div>
+                
+                <div class="form-group required-field">
+                    <label for="id_first_name">First Name</label>
+                    {{ form.first_name }}
+                </div>
+                
+                <div class="form-group required-field">
+                    <label for="id_last_name">Last Name</label>
+                    {{ form.last_name }}
+                </div>
+                
+                <div class="form-group required-field">
+                    <label for="id_date_of_birth">Birth Date</label>
+                    {{ form.date_of_birth }}
+                </div>
+            </div>
+            
+            <div class="form-col">
+                <div class="form-group required-field">
+                    <label for="id_email">Email</label>
+                    {{ form.email }}
+                </div>
+                
+                <div class="form-group">
+                    <label for="id_phone_number">Phone</label>
+                    {{ form.phone_number }}
+                </div>
+                
+                <div class="form-group required-field">
+                    <label for="id_group">Group</label>
+                    {{ form.group }}
+                </div>
+                
+                <div class="form-group">
+                    <label for="id_address">Address</label>
+                    {{ form.address }}
+                </div>
+                
+                <div class="form-group required-field">
+                    <label for="id_status">Status</label>
+                    {{ form.status }}
+                </div>
+            </div>
         </div>
         
-        <div>
-            <label for="first_name">Имя</label>
-            {{ form.first_name }}
+        <div class="form-row">
+            <div class="form-col">
+                <div class="form-group required-field">
+                    <label for="id_enrollment_date">Enrollment Date</label>
+                    {{ form.enrollment_date }}
+                </div>
+                
+                <div class="form-group">
+                    <label for="id_graduation_date">Graduation Date</label>
+                    {{ form.graduation_date }}
+                </div>
+            </div>
+            
+            <div class="form-col">
+                <div class="form-group required-field">
+                    <label for="id_gender">Gender</label>
+                    {{ form.gender }}
+                </div>
+                
+                <div class="form-group">
+                    <label for="id_citizenship">Citizenship</label>
+                    {{ form.citizenship }}
+                </div>
+                
+                <div class="form-group">
+                    <label for="id_special_needs">Special Needs</label>
+                    {{ form.special_needs }}
+                </div>
+            </div>
         </div>
         
-        <div>
-            <label for="last_name">Фамилия</label>
-            {{ form.last_name }}
-        </div>
-        
-        <div>
-            <label for="date_of_birth">Дата рождения</label>
-            {{ form.date_of_birth }}
-        </div>
-        
-        <div>
-            <label for="email">Э-почта</label>
-            {{ form.email }}
-        </div>
-        
-        <div>
-            <label for="phone_number">Телефон</label>
-            {{ form.phone_number }}
-        </div>
-        
-        <div>
-            <label for="group">Группа</label>
-            {{ form.group }}
-        </div>
-        
-        <div>
-            <label for="address">Адрес</label>
-            {{ form.address }}
-        </div>
-        
-        <div>
-            <label for="status">Статус</label>
-            {{ form.status }}
-        </div>
-        
-        <div>
-            <label for="enrollment_date">Дата зачисления</label>
-            {{ form.enrollment_date }}
-        </div>
-        
-        <div>
-            <label for="graduation_date">Дата выпуска</label>
-            {{ form.graduation_date }}
-        </div>
-        
-        <div>
-            <label for="gender">Гендер</label>
-            {{ form.gender }}
-        </div>
-        
-        <div>
-            <label for="citizenship">Гражданство</label>
-            {{ form.citizenship }}
-        </div>
-        
-        <div>
-            <label for="special_needs">Особые потребности</label>
-            {{ form.special_needs }}
-        </div>
-        
-        <div>
-            <label for="images">Фото</label>
-            {{ form.images }}
-        </div>
-        
-        <button type="submit">Сохранить профиль</button>
+        <button type="submit" class="submit-btn">Save Profile</button>
     </form>
 </div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Превью загружаемого изображения
+        const imageInput = document.getElementById('id_image');
+        const imagePreview = document.getElementById('imagePreview');
+        const fileNameDisplay = document.getElementById('fileName');
+        
+        imageInput.addEventListener('change', function() {
+            const file = this.files[0];
+            if (file) {
+                fileNameDisplay.textContent = file.name;
+                
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    imagePreview.innerHTML = `<img src="${e.target.result}" class="preview-image" alt="Preview">`;
+                }
+                reader.readAsDataURL(file);
+            } else {
+                fileNameDisplay.textContent = 'No file chosen';
+                imagePreview.innerHTML = '<span style="color: #90e0ef;">No image selected</span>';
+            }
+        });
+        
+        // Form validation
+        const form = document.getElementById('profile-form');
+        form.addEventListener('submit', function(e) {
+            let valid = true;
+            const requiredFields = document.querySelectorAll('.required-field input, .required-field select');
+            
+            requiredFields.forEach(field => {
+                if (!field.value.trim()) {
+                    field.style.borderColor = '#ef476f';
+                    valid = false;
+                } else {
+                    field.style.borderColor = '#00b4d8';
+                }
+            });
+            
+            if (!valid) {
+                e.preventDefault();
+                alert('Please fill in all required fields marked with *');
+            }
+        });
+    });
+</script>
+
 {% endblock %}
