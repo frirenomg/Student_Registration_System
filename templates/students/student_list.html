@@ -1,4 +1,5 @@
 {% extends "base.html" %}
+{% load i18n %}
 {% block content %}
 
 <style>
@@ -258,59 +259,103 @@
         border-radius: 10px;
         border: 2px dashed #00b4d8;
     }
+    
+    /* Language switcher styles */
+    .language-switcher {
+        position: fixed;
+        top: 20px;
+        right: 20px;
+        z-index: 1000;
+    }
+    
+    .language-form {
+        display: flex;
+    }
+    
+    .language-btn {
+        background: rgba(22, 33, 62, 0.8);
+        color: #90e0ef;
+        border: 1px solid #00b4d8;
+        padding: 8px 12px;
+        margin-left: 5px;
+        border-radius: 5px;
+        cursor: pointer;
+        transition: all 0.3s;
+    }
+    
+    .language-btn:hover, .language-btn.active {
+        background: #00b4d8;
+        color: white;
+    }
 </style>
 
+<!-- Language switcher -->
+<div class="language-switcher">
+    <form action="{% url 'set_language' %}" method="post" class="language-form">
+        {% csrf_token %}
+        <input name="next" type="hidden" value="{{ request.path }}">
+        {% get_current_language as LANGUAGE_CODE %}
+        {% get_available_languages as LANGUAGES %}
+        {% for code, name in LANGUAGES %}
+            <button type="submit" name="language" value="{{ code }}" 
+                    class="language-btn {% if code == LANGUAGE_CODE %}active{% endif %}">
+                {{ code|upper }}
+            </button>
+        {% endfor %}
+    </form>
+</div>
+
 <div class="system-header">
-    <h1>Student Registration System</h1>
-    <p>Manage student profiles efficiently</p>
+    <h1>{% trans "Student Registration System" %}</h1>
+    <p>{% trans "Manage student profiles efficiently" %}</p>
 </div>
 
 <div class="filters-section">
-    <h2>Student Filters</h2>
+    <h2>{% trans "Student Filters" %}</h2>
     <div id="filter-form">
         <div class="filter-group">
             <div class="filter-item">
-                <label for="student_id">Student ID</label>
-                <input type="text" id="student_id" name="student_id" placeholder="Filter by ID...">
+                <label for="student_id">{% trans "Student ID" %}</label>
+                <input type="text" id="student_id" name="student_id" placeholder="{% trans 'Filter by ID...' %}">
             </div>
             
             <div class="filter-item">
-                <label for="iin">IIN</label>
-                <input type="text" id="iin" name="iin" placeholder="Filter by IIN...">
+                <label for="iin">{% trans "IIN" %}</label>
+                <input type="text" id="iin" name="iin" placeholder="{% trans 'Filter by IIN...' %}">
             </div>
             
             <div class="filter-item">
-                <label for="first_name">First Name</label>
-                <input type="text" id="first_name" name="first_name" placeholder="Filter by first name...">
+                <label for="first_name">{% trans "First Name" %}</label>
+                <input type="text" id="first_name" name="first_name" placeholder="{% trans 'Filter by first name...' %}">
             </div>
         </div>
         
         <div class="filter-group">
             <div class="filter-item">
-                <label for="last_name">Last Name</label>
-                <input type="text" id="last_name" name="last_name" placeholder="Filter by last name...">
+                <label for="last_name">{% trans "Last Name" %}</label>
+                <input type="text" id="last_name" name="last_name" placeholder="{% trans 'Filter by last name...' %}">
             </div>
             
             <div class="filter-item">
-                <label for="group">Group</label>
-                <input type="text" id="group" name="group" placeholder="Filter by group...">
+                <label for="group">{% trans "Group" %}</label>
+                <input type="text" id="group" name="group" placeholder="{% trans 'Filter by group...' %}">
             </div>
             
             <div class="filter-item">
-                <label for="phone_number">Phone</label>
-                <input type="text" id="phone_number" name="phone_number" placeholder="Filter by phone...">
+                <label for="phone_number">{% trans "Phone" %}</label>
+                <input type="text" id="phone_number" name="phone_number" placeholder="{% trans 'Filter by phone...' %}">
             </div>
         </div>
         
         <div>
-            <button type="button" onclick="resetFilters()" class="reset-btn">Reset Filters</button>
+            <button type="button" onclick="resetFilters()" class="reset-btn">{% trans "Reset Filters" %}</button>
         </div>
     </div>
 </div>
 
 <a href="{% url 'add_profile' %}">
     <button class="add-btn">
-        <i>+</i> Create New Profile
+        <i>+</i> {% trans "Create New Profile" %}
     </button>
 </a>
 
@@ -326,9 +371,9 @@
             <div class="profile-header">
                 <div class="profile-image-container">
                     {% if student.profileattachments.image %}
-                        <img src="{{ student.profileattachments.image.url }}" class="profile-image" alt="Student Photo">
+                        <img src="{{ student.profileattachments.image.url }}" class="profile-image" alt="{% trans 'Student Photo' %}">
                     {% else %}
-                        <span style="color: #90e0ef;">No Photo</span>
+                        <span style="color: #90e0ef;">{% trans "No Photo" %}</span>
                     {% endif %}
                 </div>
                 <h3 class="profile-name">{{ student.first_name }} {{ student.last_name }}</h3>
@@ -336,28 +381,28 @@
             
             <div class="profile-details">
                 <div class="detail-item">
-                    <span class="detail-label">Student ID:</span>
+                    <span class="detail-label">{% trans "Student ID:" %}</span>
                     <span class="detail-value">{{ student.student_id }}</span>
                 </div>
                 
                 <div class="detail-item">
-                    <span class="detail-label">IIN:</span>
+                    <span class="detail-label">{% trans "IIN:" %}</span>
                     <span class="detail-value">{{ student.iin }}</span>
                 </div>
                 
                 <div class="detail-item">
-                    <span class="detail-label">Group:</span>
+                    <span class="detail-label">{% trans "Group:" %}</span>
                     <span class="detail-value">{{ student.group }}</span>
                 </div>
             </div>
             
             <a href="{% url 'details_page' sid=student.pk %}">
-                <button class="detail-btn">View Details →</button>
+                <button class="detail-btn">{% trans "View Details" %} →</button>
             </a>
         </div>
     {% empty %}
         <div class="no-results">
-            <p>No students found.</p>
+            <p>{% trans "No students found." %}</p>
         </div>
     {% endfor %}
 </div>
@@ -399,7 +444,7 @@
                 const container = document.getElementById('student-container');
                 const message = document.createElement('div');
                 message.className = 'no-results';
-                message.innerHTML = '<p>No students found matching your filters.</p>';
+                message.innerHTML = '<p>' + gettext('No students found matching your filters.') + '</p>';
                 container.appendChild(message);
             }
         } else if (noResults) {
